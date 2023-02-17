@@ -36,6 +36,6 @@ popd
 pwd
 
 # Remove torrent file
-transmission-remote -n dude:.Nir545580 -t $TR_TORRENT_ID -r
+transmission-remote -n user:123456 -t $TR_TORRENT_ID -r
 
 #eof
