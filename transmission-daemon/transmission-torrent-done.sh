@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Description: This sctipt will be triggeed by the transmission server,
+# when a torrent download is done.
+# It will check if the video file has audio encoded in EAC3, if so it will
+# re-encode it to AC3 for better compatibility with Chromecast devices.
+# It will also remove the torrent file when finished.
+#
+# Author: Walter Ferreira (wferreira.uy@gmail.com)
+
 # Get file list of current torrent
 torrent_files=$(transmission-remote -n user:123456 -t $TR_TORRENT_ID -if)
 echo -e "Torrent file list:\n$torrent_files"
