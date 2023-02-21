@@ -9,11 +9,11 @@
 # Author: Walter Ferreira (wferreira.uy@gmail.com)
 
 # Get file list of current torrent
-torrent_files=$(transmission-remote -n user:123456 -t $TR_TORRENT_ID -if)
+torrent_files=$(transmission-remote -n user:123456 -t $TR_TORRENT_ID -i)
 echo -e "Torrent file list:\n$torrent_files"
 
 # Target video file
-file_target=$(echo "$torrent_files" | grep 0:)
+file_target=$(echo "$torrent_files" | grep 'mkv\|mp4')
 
 # Set input file name
 IN_FILE=$(echo $file_target | awk '{print $7}')
