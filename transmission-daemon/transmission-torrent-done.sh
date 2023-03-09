@@ -12,14 +12,18 @@
 torrent_files=$(transmission-remote -n user:123456 -t $TR_TORRENT_ID -i)
 echo -e "Torrent file list:\n$torrent_files"
 
-# Target video file
-file_target=$(echo "$torrent_files" | grep 'mkv\|mp4')
+# Find target media file to review encoding
+file_target=$(echo "$torrent_files" | grep -E '^.*[[:digit:]]:'| grep 'mkv\|mp4')
+file_name=$(echo $file_target | awk '{print $7}'| sed 's/\[/\\\[/'| sed 's/\]/\\\]/')
+echo "file_target: $file_target"
+echo "file_name: $file_name"
 
-# Set input file name
-IN_FILE=$(echo $file_target | awk '{print $7}')
+# Set input file name path
+IN_FILE=$(find $TORRENT_DIR -name $(basename $file_name))
+echo "TORRENT_DIR: $TORRENT_DIR"
 echo "Input file: $IN_FILE"
 
-# Set output file name
+# Set output file name path
 OUT_FILE=$(echo $IN_FILE|sed 's/\(.*\)\(.\{3\}$\)/\1ac3.\2/')
 echo "Output file: $OUT_FILE"
 
