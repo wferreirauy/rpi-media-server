@@ -20,7 +20,7 @@ TORRENT_ID=$TR_TORRENT_ID
 TORRENT_DIR=$TR_TORRENT_DIR
 
 # Get file list of current torrentorrent_files=$(transmission-remote -n user:123456 -t $TR_TORRENT_ID -i)
-torrent_files=$(transmission-remote -n $TR_USER:$TR_SECRET -t $TR_TORRENT_ID -i)
+torrent_files=$(transmission-remote -n $TRUSER:$TRSECRET -t $TR_TORRENT_ID -i)
 
 # Find target media file to review encoding
 file_target=$(echo "$torrent_files" | grep -E '^.*[[:digit:]]:'| grep 'mkv\|mp4')
@@ -48,6 +48,6 @@ fi
 popd
 
 # Remove torrent file
-transmission-remote -n $TR_USER:$TR_SECRET -t $TR_TORRENT_ID -r
+transmission-remote -n $TRUSER:$TRSECRET -t $TR_TORRENT_ID -r
 
 #eof
