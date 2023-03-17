@@ -8,9 +8,19 @@
 #
 # Author: Walter Ferreira (wferreira.uy@gmail.com)
 
-# Get file list of current torrent
-torrent_files=$(transmission-remote -n user:123456 -t $TR_TORRENT_ID -i)
-echo -e "Torrent file list:\n$torrent_files"
+# Add Transmission user cred to this file.
+# /var/lib/transmission-daemon/.setenv
+# TR_USER=<user>
+# TR_SECRET=<password>
+source ~/.setenv
+
+TRUSER=$TR_USER
+TRSECRET=$TR_SECRET
+TORRENT_ID=$TR_TORRENT_ID 
+TORRENT_DIR=$TR_TORRENT_DIR
+
+# Get file list of current torrentorrent_files=$(transmission-remote -n user:123456 -t $TR_TORRENT_ID -i)
+torrent_files=$(transmission-remote -n $TR_USER:$TR_SECRET -t $TR_TORRENT_ID -i)
 
 # Find target media file to review encoding
 file_target=$(echo "$torrent_files" | grep -E '^.*[[:digit:]]:'| grep 'mkv\|mp4')
@@ -28,7 +38,7 @@ OUT_FILE=$(echo $IN_FILE|sed 's/\(.*\)\(.\{3\}$\)/\1ac3.\2/')
 echo "Output file: $OUT_FILE"
 
 # If the video file has an EAC3 audio encoding, then re-encode to AC3.
-pushd $TR_TORRENT_DIR
+pushd $TORRENT_DIR
 if mediainfo $IN_FILE|grep EAC3; then
     echo -e "Found EAC3 audio encoding.\nRe-encondig to AC3:"
     $(ffmpeg -hwaccel auto -y -i $IN_FILE -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k $OUT_FILE) && rm -f $IN_FILE
@@ -38,6 +48,6 @@ fi
 popd
 
 # Remove torrent file
-transmission-remote -n user:123456 -t $TR_TORRENT_ID -r
+transmission-remote -n $TR_USER:$TR_SECRET -t $TR_TORRENT_ID -r
 
 #eof
