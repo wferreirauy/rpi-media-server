@@ -10,8 +10,8 @@
 
 # Add Transmission user cred to this file.
 # /var/lib/transmission-daemon/.setenv
-# TR_USER=<user>
-# TR_SECRET=<password>
+#   export TR_USER=<user>
+#   export TR_SECRET=<password>
 source ~/.setenv
 
 TRUSER=$TR_USER
