@@ -6,7 +6,13 @@
 # re-encode it to AC3 for better compatibility with Chromecast devices.
 # It will also remove the torrent file when finished.
 #
+# Transmission documentation: https://github.com/transmission/transmission/blob/main/docs/README.md
+#
 # Author: Walter Ferreira (wferreira.uy@gmail.com)
+#
+
+# Enable debug mode
+#set -xv
 
 # Add Transmission user cred to this file.
 # /var/lib/transmission-daemon/.setenv
@@ -14,13 +20,15 @@
 #   export TR_SECRET=<password>
 source ~/.setenv
 
+# transmission user
 TRUSER=$TR_USER
+# transmission secret
 TRSECRET=$TR_SECRET
+TREMOTE="transmission-remote -n $TRUSER:$TRSECRET"
 TORRENT_ID=$TR_TORRENT_ID 
 TORRENT_DIR=$TR_TORRENT_DIR
 
-# Get file list of current torrentorrent_files=$(transmission-remote -n user:123456 -t $TR_TORRENT_ID -i)
-torrent_files=$(transmission-remote -n $TRUSER:$TRSECRET -t $TR_TORRENT_ID -i)
+torrent_files=$(eval $TREMOTE -t $TR_TORRENT_ID -f)
 
 # Find target media file to review encoding
 file_target=$(echo "$torrent_files" | grep -E '^.*[[:digit:]]:'| grep 'mkv\|mp4')
@@ -48,6 +56,6 @@ fi
 popd
 
 # Remove torrent file
-transmission-remote -n $TRUSER:$TRSECRET -t $TR_TORRENT_ID -r
+eval $TREMOTE -r
 
 #eof
