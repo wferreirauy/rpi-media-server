@@ -56,6 +56,6 @@ fi
 popd
 
 # Remove torrent file
-eval $TREMOTE -r
+eval $TREMOTE -t $TR_TORRENT_ID -r
 
 #eof
