@@ -56,7 +56,7 @@ fi
 popd
 
 # Remove torrent file
-if eval $TREMOTE -t $TR_TORRENT_ID -it|grep 'speedapp\|torrentleech'; then
+if eval $TREMOTE -t $TR_TORRENT_ID -it|grep 'speedapp\|torrentleech\|td-peers.com'; then
 	echo "Private Tracker, I will not remove the torrent."
 else
 	echo "Removing torrent."
