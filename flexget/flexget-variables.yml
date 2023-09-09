@@ -1,0 +1,26 @@
+transmission:
+  host: localhost
+  port: 9091
+  username: xxxx
+  password: xxxxxxxx
+
+torrentday:
+  rss: https://torrentday.com/t.rss?7;u=xxxx;tp=xxxx;xxxx;private;do-not-share
+  uid: 'xxxx'
+  cfduid: xxxxxxxxxxxxxxxxxxxxxxxx
+  passkey: xxxxxxxxxx
+  rss_key: xxxxxxxxxx
+  category: xxxx
+  nickname: xxxx
+
+tv_720p_list:
+  - Only Murders In The Building
+  - Special Ops Lioness
+  - Severance
+  - Silo
+  - The Last Of Us
+  - Invasion
+
+tv_1080p_list:
+  - Ahsoka
+  - Foundation
