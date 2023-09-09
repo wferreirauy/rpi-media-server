@@ -1,0 +1,103 @@
+# Flexget config documentation https://flexget.com/InstallWizard/Linux/Scheduling
+
+variables: flexget-variables.yml
+
+templates:
+  anchors:
+    _transmission: &transmission
+      host: '{? transmission.host ?}'
+      port: '{? transmission.port ?}'
+      username: '{? transmission.username ?}'
+      password: '{? transmission.password ?}'
+      action: add
+
+    _torrentday_irc: &torrentday_irc
+      passkey: '{? torrentday.rss_key ?}'
+      nickname: '{? torrentday.nickname ?}' 
+
+  global-settings:
+    <<: *transmission
+    free_space:
+      path: /mnt/pi4/torrent-complete
+      space: 2000
+    include:
+      - reject.yml
+    sort_by:
+      field: quality
+      reverse: yes
+  tv-settings:
+    content_size:
+      max: 3000
+      min: 500
+    sequence:
+      - configure_series:
+          from:
+            - torrentday:
+                uid: '{? torrentday.uid ?}'
+                cfduid: '{? torrentday.cfduid ?}'
+                passkey: '{? torrentday.passkey ?}'
+                rss_key: '{? torrentday.rss_key ?}'
+                category: '{? torrentday.category ?}'
+          settings:
+            720p:
+              quality: 720p webrip|hdtv|webdl h264
+            1080p:
+              quality: 1080p webrip|hdtv|webdl h264
+          720p: '{? tv_720p_list ?}'
+          1080p: '{? tv_1080p_list ?}'
+
+tasks:
+  torrentday_series:
+    priority: 10
+    template:
+      - global-settings
+    discover:
+      what:
+        - next_series_episodes: yes
+      from:
+        - torrentday:
+            uid: '{? torrentday.uid ?}'
+            cfduid: '{? torrentday.cfduid ?}'
+            passkey: '{? torrentday.passkey ?}'
+            rss_key: '{? torrentday.rss_key ?}'
+            category: '{? torrentday.category ?}'
+    # rss:
+    #   url: '{? td.rss ?}'
+    #   other_fields:
+    #     - pubDate
+    series:
+      settings:
+        720p:
+          quality: 720p webrip|hdtv|webdl h264
+        1080p:
+          quality: 1080p webrip|hdtv|webdl h264
+      720p: '{? tv_720p_list ?}'
+      1080p: '{? tv_1080p_list ?}'
+    # download: /media/torrents/
+
+    irc-tv-dl:
+      manual: yes
+      max_reruns: 0
+      template:
+        - global-settings
+        - tv-settings
+
+
+### Web Server
+
+web_server:
+  web_ui: yes
+
+irc:
+  irc_td:
+    <<: *torrentday_irc
+    tracker_file: 'TorrentDay.tracker'
+    port: 6697
+    use_ssl: yes
+    channels: ["#td.announce"]
+    task_re:
+      - task: irc-tv-dl
+        patterns:
+          - regexp: (TV\/x264|TV\/Web-DL)
+            field: irc_category
+      - task: irc-movie-dl
