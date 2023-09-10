@@ -12,15 +12,10 @@ torrentday:
   rss_key: xxxxxxxxxx
   category: xxxx
   nickname: xxxx
+  irc_password: xxxxx
 
-tv_720p_list:
-  - Only Murders In The Building
-  - Special Ops Lioness
-  - Severance
-  - Silo
-  - The Last Of Us
-  - Invasion
-
-tv_1080p_list:
-  - Ahsoka
-  - Foundation
+trakt:
+  username: xxxx
+  account: xxxx
+  tv_720p: xxxx
+  tv_1080p: xxxx

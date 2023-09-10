@@ -9,14 +9,36 @@ templates:
       port: '{? transmission.port ?}'
       username: '{? transmission.username ?}'
       password: '{? transmission.password ?}'
-      action: add
 
     _torrentday_irc: &torrentday_irc
       passkey: '{? torrentday.rss_key ?}'
-      nickname: '{? torrentday.nickname ?}' 
+      nickname: '{? torrentday.nickname ?}'
+      password: '{? torrentday.irc_password ?}'
+
+    _trakt_credentials: &trakt_credentials
+      username: '{? trakt.username ?}'
+      account: '{? trakt.account ?}'
+
+    _tv_lookup: &tv_lookup
+      thetvdb_lookup: yes
+      trakt_lookup:
+        <<: *trakt_credentials
+  
+  trakt_tv_720: &trakt_tv_720
+    trakt_list:
+      <<: *trakt_credentials
+      list: '{? trakt.tv_720p ?}'
+      type: shows
+
+  trakt_tv_1080: &trakt_tv_1080
+    trakt_list:
+      <<: *trakt_credentials
+      list: '{? trakt.tv_1080p ?}'
+      type: shows
 
   global-settings:
-    <<: *transmission
+    transmission:
+      <<: *transmission
     free_space:
       path: /mnt/pi4/torrent-complete
       space: 2000
@@ -25,73 +47,42 @@ templates:
     sort_by:
       field: quality
       reverse: yes
-  tv-settings:
+
+tasks:
+  irc-tv-dl:
+    manual: yes
+    max_reruns: 0
+    template:
+      - global-settings
     content_size:
       max: 3000
       min: 500
     sequence:
       - configure_series:
           from:
-            - torrentday:
-                uid: '{? torrentday.uid ?}'
-                cfduid: '{? torrentday.cfduid ?}'
-                passkey: '{? torrentday.passkey ?}'
-                rss_key: '{? torrentday.rss_key ?}'
-                category: '{? torrentday.category ?}'
+            <<: *trakt_tv_720
           settings:
-            720p:
-              quality: 720p webrip|hdtv|webdl h264
-            1080p:
-              quality: 1080p webrip|hdtv|webdl h264
-          720p: '{? tv_720p_list ?}'
-          1080p: '{? tv_1080p_list ?}'
-
-tasks:
-  torrentday_series:
-    priority: 10
-    template:
-      - global-settings
-    discover:
-      what:
-        - next_series_episodes: yes
-      from:
-        - torrentday:
-            uid: '{? torrentday.uid ?}'
-            cfduid: '{? torrentday.cfduid ?}'
-            passkey: '{? torrentday.passkey ?}'
-            rss_key: '{? torrentday.rss_key ?}'
-            category: '{? torrentday.category ?}'
-    # rss:
-    #   url: '{? td.rss ?}'
-    #   other_fields:
-    #     - pubDate
-    series:
-      settings:
-        720p:
-          quality: 720p webrip|hdtv|webdl h264
-        1080p:
-          quality: 1080p webrip|hdtv|webdl h264
-      720p: '{? tv_720p_list ?}'
-      1080p: '{? tv_1080p_list ?}'
-    # download: /media/torrents/
-
-    irc-tv-dl:
-      manual: yes
-      max_reruns: 0
-      template:
-        - global-settings
-        - tv-settings
-
-
-### Web Server
-
-web_server:
-  web_ui: yes
+            exact: no
+            target: 720p hdtv+
+            quality: 720p webrip+
+            timeframe: 18 hours
+            identified_by: ep
+            specials: no
+      - configure_series:
+          from:
+            <<: *trakt_tv_1080
+          settings:
+            exact: no
+            target: 1080p hdtv+
+            quality: 1080p webrip+
+            timeframe: 18 hours
+            identified_by: ep
+            specials: no
 
 irc:
   irc_td:
     <<: *torrentday_irc
-    tracker_file: 'TorrentDay.tracker'
+    tracker_file: 'trackers/TorrentDay.tracker'
     port: 6697
     use_ssl: yes
     channels: ["#td.announce"]
@@ -100,4 +91,6 @@ irc:
         patterns:
           - regexp: (TV\/x264|TV\/Web-DL)
             field: irc_category
-      - task: irc-movie-dl
+
+web_server:
+  web_ui: yes
