@@ -85,7 +85,6 @@ web_server:
   web_ui: yes
 
 schedules:
-  # Run every task once an hour
   - tasks: 'td_tv'
     interval:
       minutes: 30
