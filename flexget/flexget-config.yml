@@ -10,14 +10,8 @@ templates:
       username: '{? transmission.username ?}'
       password: '{? transmission.password ?}'
 
-    _torrentday_irc: &torrentday_irc
-      passkey: '{? torrentday.rss_key ?}'
-      nickname: '{? torrentday.nickname ?}'
-      password: '{? torrentday.irc_password ?}'
-
     _trakt_credentials: &trakt_credentials
       username: '{? trakt.username ?}'
-      account: '{? trakt.account ?}'
 
     _tv_lookup: &tv_lookup
       thetvdb_lookup: yes
@@ -47,25 +41,33 @@ templates:
     sort_by:
       field: quality
       reverse: yes
+    content_size:
+      max: 5000
+      min: 500
 
 tasks:
-  irc-tv-dl:
-    manual: yes
-    max_reruns: 0
+  td_tv:  
+    priority: 10
     template:
       - global-settings
-    content_size:
-      max: 3000
-      min: 500
+    discover:
+      what:
+        - next_series_episodes: yes
+      from:
+        - torrentday:
+            uid: '{? torrentday.uid ?}'
+            cfduid: '{? torrentday.cfduid ?}'
+            passkey: '{? torrentday.passkey ?}'
+            rss_key: '{? torrentday.rss_key ?}'
     sequence:
       - configure_series:
           from:
             <<: *trakt_tv_720
           settings:
             exact: no
-            target: 720p hdtv+
-            quality: 720p webrip+
-            timeframe: 18 hours
+            target: 720p hdtv
+            quality: 720p webrip+ h264
+            timeframe: 6 hours
             identified_by: ep
             specials: no
       - configure_series:
@@ -73,24 +75,17 @@ tasks:
             <<: *trakt_tv_1080
           settings:
             exact: no
-            target: 1080p hdtv+
-            quality: 1080p webrip+
-            timeframe: 18 hours
+            target: 1080p hdtv
+            quality: 1080p webrip+ h264
+            timeframe: 6 hours
             identified_by: ep
             specials: no
 
-irc:
-  irc_td:
-    <<: *torrentday_irc
-    tracker_file: 'trackers/TorrentDay.tracker'
-    port: 6697
-    use_ssl: yes
-    channels: ["#td.announce"]
-    task_re:
-      - task: irc-tv-dl
-        patterns:
-          - regexp: (TV\/x264|TV\/Web-DL)
-            field: irc_category
-
 web_server:
   web_ui: yes
+
+schedules:
+  # Run every task once an hour
+  - tasks: 'td_tv'
+    interval:
+      minutes: 30

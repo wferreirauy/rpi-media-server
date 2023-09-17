@@ -5,17 +5,12 @@ transmission:
   password: xxxxxxxx
 
 torrentday:
-  rss: https://torrentday.com/t.rss?7;u=xxxx;tp=xxxx;xxxx;private;do-not-share
   uid: 'xxxx'
   cfduid: xxxxxxxxxxxxxxxxxxxxxxxx
   passkey: xxxxxxxxxx
   rss_key: xxxxxxxxxx
-  category: xxxx
-  nickname: xxxx
-  irc_password: xxxxx
 
 trakt:
   username: xxxx
-  account: xxxx
   tv_720p: xxxx
   tv_1080p: xxxx

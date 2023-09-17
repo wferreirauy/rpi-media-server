@@ -1,5 +1,6 @@
 regexp:
   reject:
+    - \bx265\b: {from: title}
     - \bR5\b: {from: title}
     - \bWEBSCR\b: {from: title}    
     - \bscreener\b: {from: title}
