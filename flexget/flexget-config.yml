@@ -43,7 +43,7 @@ templates:
       reverse: yes
     content_size:
       max: 5000
-      min: 500
+      min: 250
 
 tasks:
   td_tv:  
@@ -67,7 +67,7 @@ tasks:
             exact: no
             target: 720p hdtv
             quality: 720p webrip+ h264
-            timeframe: 6 hours
+            timeframe: 2 hours
             identified_by: ep
             specials: no
       - configure_series:
@@ -77,7 +77,7 @@ tasks:
             exact: no
             target: 1080p hdtv
             quality: 1080p webrip+ h264
-            timeframe: 6 hours
+            timeframe: 2 hours
             identified_by: ep
             specials: no
 
