@@ -1,0 +1,91 @@
+# Flexget config documentation https://flexget.com/InstallWizard/Linux/Scheduling
+
+variables: flexget-variables.yml
+
+templates:
+  anchors:
+    _transmission: &transmission
+      host: '{? transmission.host ?}'
+      port: '{? transmission.port ?}'
+      username: '{? transmission.username ?}'
+      password: '{? transmission.password ?}'
+
+    _trakt_credentials: &trakt_credentials
+      username: '{? trakt.username ?}'
+
+    _tv_lookup: &tv_lookup
+      thetvdb_lookup: yes
+      trakt_lookup:
+        <<: *trakt_credentials
+  
+  trakt_tv_720: &trakt_tv_720
+    trakt_list:
+      <<: *trakt_credentials
+      list: '{? trakt.tv_720p ?}'
+      type: shows
+
+  trakt_tv_1080: &trakt_tv_1080
+    trakt_list:
+      <<: *trakt_credentials
+      list: '{? trakt.tv_1080p ?}'
+      type: shows
+
+  global-settings:
+    transmission:
+      <<: *transmission
+    free_space:
+      path: /mnt/pi4/torrent-complete
+      space: 2000
+    include:
+      - reject.yml
+    sort_by:
+      field: quality
+      reverse: yes
+    content_size:
+      max: 10000
+      min: 250
+
+tasks:
+  td_tv:  
+    priority: 10
+    template:
+      - global-settings
+    discover:
+      what:
+        - next_series_episodes:
+            from_start: yes
+      from:
+        - torrentday:
+            uid: '{? torrentday.uid ?}'
+            cfduid: '{? torrentday.cfduid ?}'
+            passkey: '{? torrentday.passkey ?}'
+            rss_key: '{? torrentday.rss_key ?}'
+    sequence:
+      - configure_series:
+          from:
+            <<: *trakt_tv_720
+          settings:
+            exact: no
+            target: 720p hdtv
+            quality: 720p webrip+ h264
+            timeframe: 1 hours
+            identified_by: ep
+            specials: no
+      - configure_series:
+          from:
+            <<: *trakt_tv_1080
+          settings:
+            exact: no
+            target: 1080p hdtv
+            quality: 1080p webrip+ h264
+            timeframe: 1 hours
+            identified_by: ep
+            specials: no
+
+web_server:
+  web_ui: yes
+
+schedules:
+  - tasks: 'td_tv'
+    interval:
+      minutes: 30

@@ -1,0 +1,16 @@
+transmission:
+  host: localhost
+  port: 9091
+  username: xxxx
+  password: xxxxxxxx
+
+torrentday:
+  uid: 'xxxx'
+  cfduid: xxxxxxxxxxxxxxxxxxxxxxxx
+  passkey: xxxxxxxxxx
+  rss_key: xxxxxxxxxx
+
+trakt:
+  username: xxxx
+  tv_720p: xxxx
+  tv_1080p: xxxx
